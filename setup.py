@@ -1,15 +1,15 @@
 from setuptools import setup, find_packages
 
 setup(
-    name='zen',
+    name='python-cli-starter',
     version='0.0.1',
-    package=find_packages(),
+    package=['cli', 'cli.commands'],
     include_package_data=True,
     install_requires=[
         'Click==7.0',
     ],
     entry_points='''
         [console_scripts]
-        zen=zen_app.main:cli
+        cmd=cli.cli:cli
     ''',
 )
