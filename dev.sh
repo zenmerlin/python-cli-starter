@@ -16,9 +16,9 @@ env-init() {
 env-install() {
     cd "${ROOT_PROJECT_DIR}"
     if [[ -z "$VIRTUAL_ENV" ]]; then
-        source .env/bin/activate
+        source .env/bin/activate && \
+        pip install --editable .
     fi
-    pip install --editable .
 }
 
 # Activate virtual environment
