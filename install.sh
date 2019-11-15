@@ -42,7 +42,7 @@ fi
 source .env/bin/activate
 
 if [[ -n "$VIRTUAL_ENV" ]]; then
-    pip install --editable . && \
+    pip install . && \
     ensure_bin_dir && \
     link_file "$(pwd)/.env/bin/cmd" "${HOME}/bin/cmd"
 else
