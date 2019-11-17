@@ -40,7 +40,7 @@ class CLI(click.MultiCommand):
             code = compile(file.read(), filename, "exec")
             eval(code, ns, ns)
 
-        return ns["cli"]
+        return ns.get("cli")
 
 
 
