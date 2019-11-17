@@ -3,8 +3,8 @@ import click
 import os
 
 
-cmd_dir = os.path.join(os.path.dirname(__file__), 'commands')
-cmd_prefix = 'cmd_'
+cmd_dir = os.path.join(os.path.dirname(__file__), "commands")
+cmd_prefix = "cmd_"
 
 class CLI(click.MultiCommand):
 
@@ -18,7 +18,7 @@ class CLI(click.MultiCommand):
         commands = []
 
         for filename in os.listdir(cmd_dir):
-            if filename.endswith('.py') and filename.startswith(cmd_prefix):
+            if filename.endswith(".py") and filename.startswith(cmd_prefix):
                 commands.append(filename[4:-3])
 
         commands.sort()
@@ -34,13 +34,13 @@ class CLI(click.MultiCommand):
         :return: Module's cli function
         """
         ns = {}
-        filename = os.path.join(cmd_dir, f'{cmd_prefix}{name}.py')
+        filename = os.path.join(cmd_dir, f"{cmd_prefix}{name}.py")
 
         with open(filename) as file:
-            code = compile(file.read(), filename, 'exec')
+            code = compile(file.read(), filename, "exec")
             eval(code, ns, ns)
 
-        return ns['cli']
+        return ns["cli"]
 
 
 
