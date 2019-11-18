@@ -7,15 +7,8 @@ trap 'last_command="$current_command"; current_command="$BASH_COMMAND"' DEBUG
 # shellcheck disable=SC2154
 trap '[[ $? != 0 ]] && echo "Install failed: \"${last_command}\" exited with code $?"' EXIT
 
-# Path to symlink program main entry point. Should be added to PATH.
-link_install_path="${HOME}/bin"
-
-# Name of the command you'll use to run the program
-cmd_name="cmd"
-
-# Path to program main (executable entry point to link to PATH)
-program_main_path="$(pwd)/.env/bin/${cmd_name}"
-
+# Path where executable main script is located in virtual env 
+program_main_path="$(pwd)/.env/bin"
 
 link_file() {
     src="$1"
@@ -36,7 +29,10 @@ link_file() {
 }
 
 main() {
-    mkdir -p "$link_install_path"
+    executable="$1"
+    executable_path="$2"
+
+    mkdir -p "$executable_path"
     
     [[ ! -e .env ]] && virtualenv .env || \
     echo "Using existing virtual environment..."
@@ -46,7 +42,9 @@ main() {
 
     if [[ -n "$VIRTUAL_ENV" ]]; then
         pip install . && \
-        link_file "$program_main_path" "${link_install_path}/${cmd_name}"
+        link_file \
+            "${program_main_path}/${executable}" \
+            "${executable_path}/${executable}"
         echo "Install succeeded!"
     else
         echo "Something went wrong: Failed to activate virtualenv."
@@ -55,4 +53,4 @@ main() {
     fi
 }
 
-main
+main $1 $2
