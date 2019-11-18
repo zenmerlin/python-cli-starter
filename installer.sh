@@ -37,20 +37,11 @@ main() {
     [[ ! -e .env ]] && virtualenv .env || \
     echo "Using existing virtual environment..."
 
-    # shellcheck disable=SC1091
-    source .env/bin/activate
-
-    if [[ -n "$VIRTUAL_ENV" ]]; then
-        pip install . && \
-        link_file \
-            "${program_main_path}/${executable}" \
-            "${executable_path}/${executable}"
-        echo "Install succeeded!"
-    else
-        echo "Something went wrong: Failed to activate virtualenv."
-        echo "Install aborted!"
-        exit 1
-    fi
+    "${program_main_path}/pip" install --no-warn-script-location . && \
+    link_file \
+        "${program_main_path}/${executable}" \
+        "${executable_path}/${executable}"
+    echo "Install succeeded!"
 }
 
-main $1 $2
+main "$1" "$2"
