@@ -8,8 +8,13 @@ def main():
     # Retrieve executable name and symlink install path from config.ini
     config = ConfigParser(os.environ)
     config.read("config.ini")
-    executable = config["installation"]["executable"]
-    executable_path = config["installation"]["executable_path"]
+    try:
+        executable = config["installation"]["executable"]
+        executable_path = config["installation"]["executable_path"]
+    except KeyError as err:
+        print(f"Error reading config file\nMissing key: {err}")
+        print("Install aborted.")
+        exit(1)
 
     # Run linux installer script
     subprocess.run(["./installer.sh", executable, executable_path])
