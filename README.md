@@ -59,13 +59,15 @@ noted in step 1.
 
         [installation]
         executable = <your-preferred-command-name>
-        executable_path = %(HOME)s/bin2. Source the included development scripts:
+        executable_path = %(HOME)s/bin
+        
+3. Source the included development scripts:
 
-3. Source the dev scripts in your current shell session:
+4. Source the dev scripts in your current shell session:
 
         source dev.sh
 
-3. Run `build`.
+5. Run `build`.
 
 ...and that's it. This will build a single file executable located in the
 `./dist` directory with the name specified in your `config.ini`. Now you can
