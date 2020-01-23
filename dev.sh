@@ -6,7 +6,6 @@ root_project_dir=$(pwd)
 build_dir="${root_project_dir}/build"
 dist_dir="${root_project_dir}/dist"
 site_pkg_dir="${root_project_dir}/.env/lib/python3.7/site-packages"
-bundle_name="cmd"
 
 # Create virtual python environment, activate it, and install the python cli app
 # as editable
@@ -68,6 +67,7 @@ clean() {
     stopdev
 }
 
+# Remove virtual environment if it exists
 rmenv() {
     echo "Removing virtual environment..."
     [[ -e "${root_project_dir}/.env" ]] && \
@@ -94,3 +94,46 @@ build() {
     # Deactivate the virtual environment activated by initenv
     [[ -n "$VIRTUAL_ENV" ]] && deactivate 
 }
+
+# Create virtual environment, install app, and symlink executable to path
+installsrc() {
+  local executable
+  local executable_path
+
+  initenv || return 1
+  startdev
+  executable="$(python get_config.py installation executable)" || \
+        { echo "Error: Failed reading config.ini"; stopdev; return 1; }
+  executable_path="$(python get_config.py installation executable_path)" || \
+        { echo "Error: Failed reading config.ini"; stopdev; return 1; }
+  stopdev
+
+  if link \
+      "${root_project_dir}/.env/bin/${executable}" \
+      "${executable_path}/${executable}"; then
+    echo "Install succeeded!"
+  else
+    echo "Install failed"
+    return 1
+  fi
+}
+
+# Helper function to symlink executable script to path
+link() {
+  src="$1"
+  dest="$2"
+  
+  if [[ -h "$dest" ]]; then
+      echo "Removing existing symlink: ${dest}..."
+      rm "${dest}"
+  elif [[ -f "$dest" || -d "$dest" ]]; then
+      echo "File or directory already exists at location ${dest}"
+      echo "Unable to complete install."
+      echo "Please rename/relocate the existing file and try again."
+      return 1
+  fi
+  
+  echo "Linking file: ${dest}"
+  ln -s "$src" "$dest"
+} 
+
