@@ -21,26 +21,33 @@ required to be installed:
 1. Ensure prerequisites are installed.
 2. Clone the repo.
 3. In the config.ini file, set the name of the main console command you would
-   like to use and where to symlink this script to in your path (`$HOME/bin` is
+   like to use and where to symlink this script in your path (`$HOME/bin` is
    recommended and is the default):
 
         [installation]
         executable = <your-preferred-command-name>
         executable_path = %(HOME)s/bin
 
-4. Run the installer:
+4. Change to the project root directory and source the dev scripts into your 
+   current shell session:
 
-        python3 install.py
+        source dev.sh
 
-5. Make sure the `executable_path` you set above is in your `PATH` and try
+5. Run `installsrc` to create the virtual environment, install the app, and 
+   link the executable script to `executable_path`
+
+6. Make sure the `executable_path` you set above is in your `PATH` and try
    running the command name you set for `executable`. For example, if you set
    executable to `cmd`, try:
 
         cmd --help
 
-6. If successful, you should see the base help output of your application.
+7. If successful, you should see the base help output of your application.
 
-This method can be used for development and distribution.
+This method can be used for development and distribution. Essentially this
+automates creation of your virtual environment and provides you with an 
+entry point in your path to run your app without having to activate/deactivate
+the virtual environment.
 
 Pros: Can edit source more readily.
 
@@ -61,13 +68,11 @@ noted in step 1.
         executable = <your-preferred-command-name>
         executable_path = %(HOME)s/bin
         
-3. Source the included development scripts:
-
-4. Source the dev scripts in your current shell session:
+3. Change to the project root directory and source the dev scripts into your current shell session
 
         source dev.sh
 
-5. Run `build`.
+4. Run `build`.
 
 ...and that's it. This will build a single file executable located in the
 `./dist` directory with the name specified in your `config.ini`. Now you can
@@ -76,27 +81,17 @@ running it. No install required.
 
 Note: Default build is for linux targets only. TODO: add Windows and MacOS targets.
 
-# Development
+## Development Helper Scripts
 
-For development, after cloning the repo all you need to do to begin working
-is create a virtual environment to work in and install the application as
-editable. First, you need to set the command name in the config.ini file as in
-step 2 above. Then you can create your virtual environment and install the
-application into it as follows:
+Running `installsrc` from method 1 above should be all you need to do to start
+development, but here is the full list of helper scripts if you prefer a different
+process:
 
-    virtualenv .env
-    source .env/bin/activate
-    pip install --editable .
-
-You can also use the helper functions in `dev.sh` provided for
-convenience. To use these, first `source dev.sh` in your bash/zsh session and
-run `initenv` to initialize and activate the environment. At this point your
-virtual environment will be activated and you should be able to run the app.
-Afterward, you can use `startdev` and `stopdev` to activate and deactivate the
-environment respectively. Any changes you make to the code will take affect on
-subsequent runs without the need to reinstall.
-
-Other scripts included in `dev.sh`:
-
+    initenv: Create virtual environment and install application as editable
+    startdev: Activates virtual environment
+    stopdev: Deactivates virtual environment
     clean: Removes artifacts from prior builds if they exist
     rmenv: Removes virtual environment if it exists
+    build: Builds project as single execuatable binary
+    installsrc: Installs app from source and symlinks script to path
+    link: Helper for installsrc to create symlink
