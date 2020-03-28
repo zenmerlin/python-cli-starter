@@ -98,17 +98,6 @@ def create_symlink(src, dst):
     # If no conflicts, create the symlink
     print(f"Creating symlink at {dst} -> {src}")
     os.symlink(src, dst)
-
-
-def cd(dirname):
-    """
-    Change directory
-    """
-    prev_dir = os.getcwd()
-    try:
-        os.chdir(dirname)
-    except OSError as e:
-        exit_on_err(e)
     
 
 def run(cmd):
