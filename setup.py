@@ -2,22 +2,23 @@ from configparser import ConfigParser
 import os
 from setuptools import setup, find_packages
 
-# Get name of executable console command from config
+# Get name of console command from config
 config = ConfigParser(os.environ)
 config.read("config.ini")
-executable = config["installation"]["executable"]
+command = config["installation"]["command"]
 
 
 setup(
-    name="python-cli-starter",
+    name="mycli",
     version="0.0.1",
-    py_modules=["cli"],
+    packages=find_packages(),
+    include_package_data=True,
     install_requires=[
         "Click==7.0",
     ],
-    entry_points= {
-        "console_scripts": [
-            f"{executable}=cli:cli"
-        ]
-    }
+    entry_points= f"""
+        [console_scripts]
+        {command}=mycli.cli:cli
+    """
 )
+
