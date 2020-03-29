@@ -57,6 +57,6 @@ activate/deactivate the virtual environment.
         pip install . --editable
 
 6. Install any other tools required for your development environment, such as
-   linters such as `pylint`.
+   linters like `pylint`.
 
 7. To exit development environment, run `deactivate` or just exit your shell.
