@@ -1,4 +1,9 @@
-#! /usr/bin/env python3
+#!/usr/bin/env python3
+
+"""
+Installer script to create virtual environment, install tool and dependencies,
+and add command to PATH
+"""
 
 from configparser import ConfigParser
 import os
@@ -6,12 +11,13 @@ import shlex
 import shutil
 import sys
 import subprocess
+from subprocess import CalledProcessError
 
 
 # Python versions below 3.<PY_MINOR_VERSION_MIN> are unsupported
 PY_MINOR_VERSION_MIN = 7
 UNSUPPORTED_PYTHON = (
-    (sys.version_info[0] == 2) or 
+    (sys.version_info[0] == 2) or
     (sys.version_info[0] == 3 and sys.version_info[1] < PY_MINOR_VERSION_MIN)
 )
 
@@ -19,10 +25,6 @@ UNSUPPORTED_PYTHON = (
 INSTALL_PATH = os.path.dirname(os.path.abspath(sys.argv[0]))
 VENV_PATH = f"{INSTALL_PATH}/.venv"
 PIP_PATH = f"{VENV_PATH}/bin/pip"
-
-
-class BadRunCommandError(Exception):
-    pass
 
 
 def create_virtualenv():
@@ -36,7 +38,7 @@ def create_virtualenv():
         choice = input("Proceed with install and overwrite [y/n]? ")
         if choice.upper() != "Y":
             print("Install aborted.")
-            exit(0)
+            sys.exit(0)
         else:
             print("Removing virtual environment...")
             shutil.rmtree(VENV_PATH)
@@ -48,15 +50,15 @@ def create_virtualenv():
         print("Virtual environment created successfully")
     else:
         print("Virtual environment creation failed. Install aborted.")
-        exit(1)
+        sys.exit(1)
 
 
 def pip_install():
     """
     Install tool and dependencies using pip
     """
-    print(run(f"{PIP_PATH} install wheel"))
-    print(run(f"{PIP_PATH} install ."))
+    run(f"{PIP_PATH} install wheel")
+    run(f"{PIP_PATH} install .")
 
 
 def read_config(section, key):
@@ -67,8 +69,8 @@ def read_config(section, key):
     config.read("config.ini")
     try:
         return config[section][key]
-    except KeyError as e:
-        exit_on_err(e)
+    except KeyError as err:
+        exit_on_err(err)
 
 
 def create_symlink(src, dst):
@@ -81,7 +83,7 @@ def create_symlink(src, dst):
         choice = input("Proceed with install and overwrite [y/n]? ")
         if choice.upper() != "Y":
             print("Install aborted.")
-            exit(0)
+            sys.exit(0)
         else:
             print("Removing symlink...")
             os.remove(dst)
@@ -96,9 +98,9 @@ def create_symlink(src, dst):
         )
 
     # If no conflicts, create the symlink
-    print(f"Creating symlink at {dst} -> {src}")
+    print(f"Creating symlink {dst} -> {src}")
     os.symlink(src, dst)
-    
+
 
 def run(cmd):
     """
@@ -106,28 +108,19 @@ def run(cmd):
     """
     print(f"Running command: {cmd}")
     try:
-        p = subprocess.Popen(shlex.split(cmd), stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE)
-        stdout, stderr = p.communicate()
-        if p.returncode != 0:
-            output = (stdout + stderr).decode("utf-8")
-            raise BadRunCommandError(
-                f"Error: Command {cmd} exited with code {p.returncode}: {output}")
-    except BadRunCommandError as e:
-        exit_on_err(e)
-    except ValueError as e:
-        exit_on_err(e)
-    except OSError as e:
-        exit_on_err(e)
-    return stdout.decode("utf-8")
+        subprocess.run(shlex.split(cmd), check=True)
+    except CalledProcessError as err:
+        exit_on_err(err)
+    except OSError as err:
+        exit_on_err(err)
 
 
-def exit_on_err(e):
+def exit_on_err(err):
     """
     Prints error and exits
     """
-    print(f"Error: {e}")
-    exit(1)
+    print(f"{err}")
+    sys.exit(1)
 
 
 def main():
@@ -137,7 +130,7 @@ def main():
     This will symlink a command entry point to somewhere in your path. Specify
     the name of the command and the path to symlink to in config.ini
     """
-    
+
     create_virtualenv()
     pip_install()
 
@@ -156,13 +149,17 @@ def main():
     if os.path.exists(src) and os.path.exists(dst):
         print(f"{command} successfully installed!")
     else:
-        print(f"Hmmm... something went wrong. Install failed.")
-        
+        print(
+            "Hmmm... something went wrong. Missing symlink or entry point."
+            "Install failed.")
+
 
 if __name__ == "__main__":
     if UNSUPPORTED_PYTHON:
-        err_msg = "Python 3.{} or higher required. Install aborted"
-        print(err_msg.format(PY_MINOR_VERSION_MIN))
-        exit(1)
+        print(
+            "Python 3.{} or higher required. Install aborted".format(
+                PY_MINOR_VERSION_MIN
+            )
+        )
+        sys.exit(1)
     main()
-
