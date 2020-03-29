@@ -2,96 +2,61 @@
 
 Starter project for Python CLI application. This defaults to using Click, but
 feel free to substitute with your library of preference. For more information on
-using Click to build beautiful CLI applications in Python, see the
+using Click to build CLI applications in Python, see the
 [documentation](https://click.palletsprojects.com/en/7.x/).
 
 # Getting Started
 ## Prerequisites
-For installing from source, development, and running builds, the following are
-required to be installed:
-
-1. Python 3.6 or greater (tested with 3.7)
-2. Pip (tested with 19.3.1)
-3. Virtualenv (tested with 16.7.5)
+Make sure you have Python 3.6 or greater (tested with 3.7) installed. The
+install script uses the built in venv and pip modules for the install, so you
+shouldn't need to install anything else explicitly.
 
 ## Installation
 
-### Method 1: Install editable from source
-
-1. Ensure prerequisites are installed.
-2. Clone the repo.
-3. In the config.ini file, set the name of the main console command you would
-   like to use and where to symlink this script in your path (`$HOME/bin` is
-   recommended and is the default):
+1. Clone the repo.
+2. In the config.ini file, set the name of the main console command you would
+   like to use and where to symlink this script in your PATH (`$HOME/bin` is
+   the default):
 
         [installation]
-        executable = <your-preferred-command-name>
-        executable_path = %(HOME)s/bin
+        command = <your-preferred-command-name>
+        command_path = %(HOME)s/bin
 
-4. Change to the project root directory and source the dev scripts into your 
-   current shell session:
+3. Change to the project root directory and run `./install.py` to create the
+   virtual environment, install the app, and link the executable script to
+   `command_path`
 
-        source dev.sh
-
-5. Run `installsrc` to create the virtual environment, install the app, and 
-   link the executable script to `executable_path`
-
-6. Make sure the `executable_path` you set above is in your `PATH` and try
-   running the command name you set for `executable`. For example, if you set
-   executable to `cmd`, try:
+6. Make sure the `command_path` you set above is in your `PATH` and try
+   running the command name you set for `command`. For example, if you set
+   command to `cmd`, try:
 
         cmd --help
 
 7. If successful, you should see the base help output of your application.
 
-This method can be used for development and distribution. Essentially this
-automates creation of your virtual environment and provides you with an 
-entry point in your path to run your app without having to activate/deactivate
-the virtual environment.
+Essentially this automates creation of your virtual environment and provides you
+with an entry point in your path to run your app without having to
+activate/deactivate the virtual environment.
 
-Pros: Can edit source more readily.
+## Development
 
-Cons: More complicated, and requires users to have specific tools installed as
-noted in step 1.
+1. Clone the repo.
+2. Modify the command name in config.ini same as you did above.
+3. Modify setup.py as needed to add or remove libraries to install.
+3. Create virtual environment:
 
-### Method 2: Build distributable executable using PyInstaller
+        python3 -m venv .venv
 
-1. Ensure prerequisites are installed with the addition of PyInstaller (tested with 3.5):
+4. Activate the virtual environment.
 
-        pip3 install pyinstaller
+        . .venv/bin/activate
 
-2. In the config.ini file, set the name of the main console command you would
-   like to use. The `executable_path` is not used in this case, so it is fine to
-   leave it as the default:
+5. Pip install wheel, followed by your package as editable.
 
-        [installation]
-        executable = <your-preferred-command-name>
-        executable_path = %(HOME)s/bin
-        
-3. Change to the project root directory and source the dev scripts into your current shell session
+        pip install wheel
+        pip install . --editable
 
-        source dev.sh
+6. Install any other tools required for your development environment, such as
+   linters like `pylint`.
 
-4. Run `build`.
-
-...and that's it. This will build a single file executable located in the
-`./dist` directory with the name specified in your `config.ini`. Now you can
-distribute your application by simply copying the file to the target system and
-running it. No install required.
-
-Note: Default build is for linux targets only. TODO: add Windows and MacOS targets.
-
-## Development Helper Scripts
-
-Running `installsrc` from method 1 above should be all you need to do to start
-development, but here is the full list of helper scripts if you prefer a different
-process:
-
-    initenv: Create virtual environment and install application as editable
-    startdev: Activates virtual environment
-    stopdev: Deactivates virtual environment
-    clean: Removes artifacts from prior builds if they exist
-    rmenv: Removes virtual environment if it exists
-    build: Builds project as single execuatable binary
-    installsrc: Installs app from source and symlinks script to path
-    link: Helper for installsrc to create symlink
+7. To exit development environment, run `deactivate` or just exit your shell.
