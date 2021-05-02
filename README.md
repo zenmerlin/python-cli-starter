@@ -38,6 +38,16 @@ Essentially this automates creation of your virtual environment and provides you
 with an entry point in your path to run your app without having to
 activate/deactivate the virtual environment.
 
+## Docker Build
+
+Basic Dockerfile included to build an image of your app. To use, run:
+
+    docker build -t mycli:latest .
+
+You can then run the app with:
+
+    docker run mycli:latest cmd --help
+
 ## Development
 
 1. Clone the repo.
