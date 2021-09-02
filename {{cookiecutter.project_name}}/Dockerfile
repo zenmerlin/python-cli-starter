@@ -1,5 +1,5 @@
 FROM python:3.7-alpine
-MAINTAINER Jason Boyll <jason.boyll@gmail.com>
+MAINTAINER {{ cookiecutter.author }} <{{ cookiecutter.author_email }}>
 
 COPY ./mycli /usr/local/mycli/mycli
 COPY ./setup.py /usr/local/mycli/setup.py

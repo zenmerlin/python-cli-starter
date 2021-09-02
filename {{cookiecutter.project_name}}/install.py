@@ -5,7 +5,6 @@ Installer script to create virtual environment, install tool and dependencies,
 and add command to PATH
 """
 
-from configparser import ConfigParser
 import os
 import shlex
 import shutil
@@ -15,9 +14,9 @@ from subprocess import CalledProcessError
 
 
 # Python versions below 3.<PY_MINOR_VERSION_MIN> are unsupported
-PY_MINOR_VERSION_MIN = 7
+PY_MINOR_VERSION_MIN = {{ cookiecutter.python_minor_version_min }}
 UNSUPPORTED_PYTHON = (
-    (sys.version_info[0] == 2) or
+    (sys.version_info[0] == 2) or 
     (sys.version_info[0] == 3 and sys.version_info[1] < PY_MINOR_VERSION_MIN)
 )
 
@@ -25,6 +24,8 @@ UNSUPPORTED_PYTHON = (
 INSTALL_PATH = os.path.dirname(os.path.abspath(sys.argv[0]))
 VENV_PATH = f"{INSTALL_PATH}/.venv"
 PIP_PATH = f"{VENV_PATH}/bin/pip"
+COMMAND = "{{ cookiecutter.command }}"
+COMMAND_PATH = "{{ cookiecutter.command_path }}"
 
 
 def create_virtualenv():
@@ -59,18 +60,6 @@ def pip_install():
     """
     run(f"{PIP_PATH} install wheel")
     run(f"{PIP_PATH} install .")
-
-
-def read_config(section, key):
-    """
-    Read in values from config.ini file
-    """
-    config = ConfigParser(os.environ)
-    config.read("config.ini")
-    try:
-        return config[section][key]
-    except KeyError as err:
-        exit_on_err(err)
 
 
 def create_symlink(src, dst):
@@ -127,31 +116,24 @@ def main():
     """
     Creates a python virtual environment and installs tool and dependencies
 
-    This will symlink a command entry point to somewhere in your path. Specify
-    the name of the command and the path to symlink to in config.ini
+    This will symlink a command entry point to somewhere in your path. 
     """
 
     create_virtualenv()
     pip_install()
 
-    # Get the command name and path
-    command = read_config("installation", "command")
-    command_path = read_config("installation", "command_path")
-    # Delete trailing forward slash in case it was entered in config.ini
-    if command_path[-1:] == "/":
-        command_path = command_path[:-1]
-
     # Symlink command to path
-    src = f"{VENV_PATH}/bin/{command}"
-    dst = f"{command_path}/{command}"
+    src = f"{VENV_PATH}/bin/{COMMAND}"
+    dst = f"{COMMAND_PATH}/{COMMAND}"
     create_symlink(src, dst)
 
     if os.path.exists(src) and os.path.exists(dst):
-        print(f"{command} successfully installed!")
+        print(f"{COMMAND} successfully installed!")
     else:
         print(
             "Hmmm... something went wrong. Missing symlink or entry point."
-            "Install failed.")
+            "Install failed."
+        )
 
 
 if __name__ == "__main__":

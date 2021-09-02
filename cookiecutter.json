@@ -1,0 +1,10 @@
+{
+    "project_name": "mycli",
+    "root_package": "mycli",
+    "repo_baseurl": "https://github.com/zenmerlin",
+    "author": "Jason A. Boyll",
+    "author_email": "jason.boyll@gmail.com",
+    "python_minor_version_min": 7,
+    "command": "mycli",
+    "command_path": "/usr/local/bin"
+}
